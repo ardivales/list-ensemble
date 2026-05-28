@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ensemble — Élections des délégués WebbFontaine 2026</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tailwind.css">
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Montserrat', sans-serif; color: #1a2233; background: #fff; }
+
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px);} to { opacity: 1; transform: translateY(0);} }
+  @keyframes pulseSlow { 0%,100% { opacity:.5;} 50% { opacity: 1;} }
+
+  /* Page switching */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeUp .5s ease; }
+
+  /* Nav underline */
+  .nav-link { position: relative; padding-bottom: 4px; }
+  .nav-link::after {
+    content: ''; position: absolute; left: 50%; bottom: 0;
+    width: 0; height: 3px; background: #f5a525;
+    transition: width .3s ease, left .3s ease;
+  }
+  .nav-link:hover::after { width: 100%; left: 0; }
+  .nav-link.active::after { width: 100%; left: 0; }
+  .nav-link.active { color: #004182; }
+
+  /* Decorative orange underline */
+  .accent-underline { position: relative; display: inline-block; }
+  .accent-underline::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: -8px; height: 6px;
+    background: linear-gradient(90deg, #f5a525 0%, #f5a822 100%);
+    border-radius: 4px;
+  }
+
+  /* Hero title — clean balanced wrap, no ugly justify gaps */
+  .hero-title {
+    text-wrap: balance;
+    hyphens: none;
+  }
+  .hero-title .accent-underline::after { bottom: -4px; height: 5px; }
+
+  /* Carousel scroll */
+  .carousel-track {
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+  .candidate-card { scroll-snap-align: start; }
+
+  /* Subtle striped placeholder */
+  .placeholder-photo {
+    background:
+      repeating-linear-gradient(135deg,
+        #eaf2fa 0px, #eaf2fa 8px,
+        #d9e7f3 8px, #d9e7f3 16px);
+    position: relative;
+  }
+  .placeholder-photo::after {
+    content: 'PORTRAIT';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    color: #79afd9; font-weight: 600;
+  }
+
+  .placeholder-team {
+    background:
+      repeating-linear-gradient(135deg,
+        #eaf2fa 0px, #eaf2fa 14px,
+        #d9e7f3 14px, #d9e7f3 28px);
+    position: relative;
+  }
+  .placeholder-team::after {
+    content: 'PHOTO ÉQUIPE — à remplacer';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, 'SF Mono', monospace;
+    font-size: 11px; letter-spacing: 0.25em;
+    color: #004182; font-weight: 700; opacity: .7;
+  }
+
+  /* Hero gradient mesh */
+  .hero-bg {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(121,175,217,.25) 0%, transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(245,165,37,.15) 0%, transparent 50%),
+      linear-gradient(180deg, #ffffff 0%, #f6faff 100%);
+  }
+
+  /* CTA button */
+  .btn-cta {
+    background: linear-gradient(135deg, #f5a525 0%, #f5a822 100%);
+    transition: transform .25s ease, box-shadow .25s ease;
+    box-shadow: 0 10px 25px -10px rgba(245,165,37,.6);
+  }
+  .btn-cta:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -10px rgba(245,165,37,.7); }
+
+  /* Card hover */
+  .pillar-card { transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+  .pillar-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px -16px rgba(0,65,130,0.25);
+  }
+
+  .candidate-card-inner { transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease; }
+  .candidate-card-inner:hover {
+    transform: translateY(-8px);
+    border-color: #f5a525 !important;
+    box-shadow: 0 25px 45px -15px rgba(245,165,37,0.45);
+  }
+
+  /* Dots */
+  .dot { width: 10px; height: 10px; border-radius: 999px; background: #c7d9ea; transition: all .3s ease; cursor: pointer; }
+  .dot.active { background: #f5a525; width: 30px; }
+
+  /* Bullet list custom */
+  .engagement-li {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid #eaf2fa;
+  }
+  .engagement-li:last-child { border-bottom: none; }
+  .engagement-li .num {
+    flex-shrink: 0;
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #004182 0%, #003068 100%);
+    color: #f5a525;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+
+  /* Mobile menu */
+  .mobile-menu { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+  .mobile-menu.open { max-height: 320px; }
+
+  /* Date badge pulse */
+  .date-pulse::before {
+    content: ''; position: absolute; inset: -4px;
+    border-radius: 999px;
+    background: rgba(245,165,37,.35);
+    animation: pulseSlow 2.5s ease-in-out infinite;
+    z-index: -1;
+  }
+
+  /* Marquee for banner */
+  .banner-stripe {
+    background:
+      linear-gradient(90deg,
+        #004182 0%, #004182 50%,
+        #003068 50%, #003068 100%);
+    background-size: 40px 100%;
+  }
+</style>
+</head>
+<body class="antialiased">
+
+<!-- ============ HEADER / NAV (sticky) ============ -->
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-20">
+      <!-- Logo -->
+      <a href="#" data-page="accueil" class="nav-trigger flex items-center gap-3 group">
+        <!-- Logo mark (placeholder, original) -->
+        <div class="flex items-center gap-2.5">
+          <div class="relative w-11 h-11 rounded-xl bg-wf-blue flex items-center justify-center shadow-soft">
+            <div class="absolute inset-0 rounded-xl border-2 border-wf-orange opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <span class="text-white font-black text-xl tracking-tight">W</span>
+            <span class="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-wf-orange border-2 border-white"></span>
+          </div>
+          <div class="leading-none">
+            <div class="font-extrabold text-wf-blue text-lg tracking-tight">WebbFontaine</div>
+            <div class="text-[10px] uppercase tracking-[0.18em] text-gray-500 font-semibold mt-0.5">Élections des délégués 2026</div>
+          </div>
+        </div>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden md:flex items-center gap-10">
+        <a href="#" data-page="accueil" class="nav-trigger nav-link active text-sm font-bold tracking-[0.15em] text-gray-700 uppercase">Accueil</a>
+        <a href="#" data-page="pourquoi" class="nav-trigger nav-link text-sm font-bold tracking-[0.15em] text-gray-700 uppercase">Pourquoi nous</a>
+        <a href="#" data-page="equipe" class="nav-trigger nav-link text-sm font-bold tracking-[0.15em] text-gray-700 uppercase">Notre équipe</a>
+        <a href="#" data-page="equipe" class="nav-trigger btn-cta text-white font-bold text-sm px-5 py-2.5 rounded-full uppercase tracking-wider">Voter</a>
+      </nav>
+
+      <!-- Mobile burger -->
+      <button id="burger" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Menu">
+        <span class="w-6 h-0.5 bg-wf-blue transition-transform"></span>
+        <span class="w-6 h-0.5 bg-wf-blue transition-opacity"></span>
+        <span class="w-6 h-0.5 bg-wf-blue transition-transform"></span>
+      </button>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="mobile-menu md:hidden">
+      <div class="flex flex-col gap-1 py-4">
+        <a href="#" data-page="accueil" class="nav-trigger px-3 py-3 text-sm font-bold tracking-wider uppercase text-gray-700 border-l-4 border-wf-orange bg-wf-blue-soft">Accueil</a>
+        <a href="#" data-page="pourquoi" class="nav-trigger px-3 py-3 text-sm font-bold tracking-wider uppercase text-gray-700 border-l-4 border-transparent">Pourquoi nous</a>
+        <a href="#" data-page="equipe" class="nav-trigger px-3 py-3 text-sm font-bold tracking-wider uppercase text-gray-700 border-l-4 border-transparent">Notre équipe</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- PAGE 1 — ACCUEIL                                              -->
+<!-- ============================================================ -->
+<section id="page-accueil" class="page active">
+
+  <!-- Hero -->
+  <div class="hero-bg relative overflow-hidden">
+    <!-- Decorative dots grid -->
+    <div class="absolute inset-0 opacity-[0.04] pointer-events-none"
+         style="background-image: radial-gradient(#004182 1px, transparent 1px); background-size: 24px 24px;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative">
+      <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+
+        <!-- Left -->
+        <div class="lg:col-span-7 reveal">
+          <!-- Eyebrow -->
+          <div class="party-eyebrow group inline-flex items-center gap-2.5 px-5 py-2 lg:px-6 lg:py-2.5 rounded-full bg-wf-blue-soft border border-wf-blue-light/40 mb-7 cursor-default transition-all duration-300 hover:bg-wf-blue hover:border-wf-blue hover:shadow-soft">
+            <span class="relative flex w-2.5 h-2.5">
+              <span class="absolute inline-flex h-full w-full rounded-full bg-wf-orange opacity-75 animate-ping"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-wf-orange"></span>
+            </span>
+            <span class="text-sm lg:text-base font-bold tracking-[0.2em] uppercase text-wf-blue group-hover:text-white transition-colors duration-300">
+              Campagne 2026 — Liste
+              <span class="party-name relative ml-1 inline-block font-black text-wf-orange tracking-[0.25em]">
+                Ensemble
+                <span class="party-underline absolute left-0 right-0 -bottom-0.5 h-[2px] bg-wf-orange origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"></span>
+              </span>
+            </span>
+          </div>
+
+          <h1 class="hero-title text-4xl sm:text-5xl lg:text-6xl font-extrabold text-wf-blue leading-[1.1] tracking-tight">Unis pour vous<br/>représenter.<br/><span class="accent-underline">Ensemble</span>, on va plus loin.</h1>
+
+          <p class="mt-10 text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl text-pretty">Faire entendre chaque voix, transformer vos préoccupations en actions concrètes, et rendre des comptes à chaque étape. C'est l'engagement que nous prenons devant vous pour cette mandature.</p>
+
+          <div class="mt-10 flex flex-wrap items-center gap-4">
+            <a href="#" data-page="equipe" class="nav-trigger btn-cta inline-flex items-center gap-3 text-white font-bold px-7 py-4 rounded-full uppercase tracking-wider text-sm">
+              Découvrir notre équipe
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+            <a href="#" data-page="pourquoi" class="nav-trigger inline-flex items-center gap-2 text-wf-blue font-bold px-5 py-4 text-sm uppercase tracking-wider hover:text-wf-orange transition-colors">
+              Pourquoi nous ?
+            </a>
+          </div>
+
+          <!-- Quick stats -->
+          <div class="mt-14 grid grid-cols-3 gap-6 max-w-lg">
+            <div>
+              <div class="text-3xl font-extrabold text-wf-blue">6</div>
+              <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mt-1">Candidat·es engagé·es</div>
+            </div>
+            <div class="border-l border-wf-blue-light/40 pl-6">
+              <div class="text-3xl font-extrabold text-wf-blue">6</div>
+              <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mt-1">Services représentés</div>
+            </div>
+            <div class="border-l border-wf-blue-light/40 pl-6">
+              <div class="text-3xl font-extrabold text-wf-blue">100<span class="text-wf-orange">%</span></div>
+              <div class="text-xs font-semibold uppercase tracking-wider text-gray-500 mt-1">À votre écoute</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right visual — photo composition -->
+        <div class="lg:col-span-5 reveal">
+          <div class="relative">
+            <!-- Decorative offsets -->
+            <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-wf-orange rounded-2xl -z-10"></div>
+            <div class="absolute -top-6 -right-6 w-24 h-24 border-4 border-wf-blue rounded-full -z-10"></div>
+
+            <!-- Main portrait card -->
+            <div class="relative rounded-3xl overflow-hidden shadow-card aspect-[4/5] bg-wf-blue-soft">
+              <img src="photos/hero-team.jpg" alt="Cohésion d'équipe WebbFontaine" loading="lazy"
+                   class="w-full h-full object-cover"
+                   style="object-position: 50% 50%;" />
+              <!-- Soft gradient overlay for legibility of top badge -->
+              <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/35 to-transparent"></div>
+              <!-- Top-right scrutin badge -->
+              <div class="absolute top-5 right-5 flex flex-col items-end gap-1.5">
+                <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/95 backdrop-blur text-wf-blue text-[10px] font-bold uppercase tracking-[0.2em] shadow-soft">SCRUTIN 29 MAI</span>
+              </div>
+              <!-- Bottom-left caption -->
+              <div class="absolute inset-x-0 bottom-0 p-5 lg:p-6 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
+                <div class="text-[10px] font-bold uppercase tracking-[0.25em] text-wf-orange">Liste Ensemble</div>
+                <div class="text-white font-extrabold text-lg lg:text-xl leading-tight mt-1 max-w-[16ch]">Au plus près du terrain.</div>
+              </div>
+            </div>
+
+            <!-- Overlapping secondary photo -->
+            <div class="absolute -bottom-10 -left-4 sm:-left-10 w-[42%] max-w-[210px] rounded-2xl overflow-hidden shadow-card border-4 border-white rotate-[-3deg] hover:rotate-0 transition-transform duration-500 bg-wf-blue-soft">
+              <img src="photos/hero-portrait.jpg" alt="Trois membres de la liste Ensemble" loading="lazy"
+                   class="w-full h-full object-cover aspect-[3/5]"
+                   style="object-position: 50% 35%;" />
+            </div>
+
+            <!-- Floating check badge -->
+            <div class="absolute -bottom-6 -right-4 sm:-right-8 bg-white rounded-2xl shadow-card p-5 max-w-xs border border-gray-100 z-10">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-wf-orange flex items-center justify-center flex-shrink-0">
+                  <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div>
+                  <div class="text-xs font-bold uppercase tracking-wider text-wf-orange">Votre vote</div>
+                  <div class="text-sm font-bold text-wf-blue mt-0.5 leading-tight">Compte vraiment.</div>
+                  <div class="text-xs text-gray-500 mt-0.5">Bulletin secret · 5 min</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- "Notre engagement" -->
+  <div class="bg-white py-20 lg:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-12 lg:gap-20">
+        <div class="lg:col-span-5 reveal">
+          <div class="text-sm font-bold tracking-[0.25em] uppercase text-wf-orange mb-5">Notre engagement</div>
+          <h2 class="text-3xl lg:text-4xl font-extrabold text-wf-blue leading-tight">
+            Une liste qui<br/>vous ressemble,<br/>une liste qui vous<br/><span class="accent-underline">défend</span>.
+          </h2>
+        </div>
+        <div class="lg:col-span-7 space-y-6 text-gray-600 leading-relaxed text-base lg:text-lg reveal">
+          <p>Nous sommes six collaboratrices et collaborateurs issus d'autant de service divers. Nous partageons les mêmes réalités du quotidien : les défis, les exigences, les réussites, les périodes de pression mais aussi la volonté commune de faire avancer l’entreprise dans un bon environnement de travail.</p>
+          <p>Notre liste ne promet pas la lune. Elle s'engage sur du concret : faire remonter les préoccupations du terrain, favoriser un dialogue constructif avec la direction, assurer un meilleur suivi des sujets remontés et finalement représenter chaque collègue afin que chacun puisse se sentir entendu et considéré.</p>
+          <p>Voter pour la liste Ensemble, c'est choisir le dialogue, la considération et la compréhension.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banner appel à voter -->
+  <div class="relative bg-wf-blue text-white overflow-hidden">
+    <div class="absolute inset-0 opacity-10"
+         style="background-image: radial-gradient(circle at 20% 50%, #f5a525 0%, transparent 40%), radial-gradient(circle at 80% 50%, #79afd9 0%, transparent 40%);"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-8 text-center lg:text-left">
+        <div class="flex items-center gap-6">
+          <!-- Date block -->
+          <div class="flex-shrink-0 bg-white rounded-2xl px-5 py-3 text-wf-blue shadow-soft min-w-[100px]">
+            <div class="text-xs font-bold uppercase tracking-wider text-wf-orange-deep">MAI</div>
+            <div class="text-4xl font-black leading-none">29</div>
+            <div class="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mt-1">2026</div>
+          </div>
+          <div>
+            <div class="text-xs font-bold uppercase tracking-[0.25em] text-wf-orange mb-2">Réservez la date</div>
+            <h3 class="text-2xl lg:text-3xl font-extrabold leading-tight">Scrutin des délégués<br class="hidden sm:inline"/> du personnel WebbFontaine</h3>
+            <p class="text-wf-blue-light text-sm mt-2">WebbFontaine Benin</p>
+          </div>
+        </div>
+        <a href="#" data-page="equipe" class="nav-trigger btn-cta inline-flex items-center gap-3 text-white font-bold px-7 py-4 rounded-full uppercase tracking-wider text-sm whitespace-nowrap">
+          Découvrir nos candidat·es
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ============================================================ -->
+<!-- PAGE 2 — POURQUOI NOUS                                        -->
+<!-- ============================================================ -->
+<section id="page-pourquoi" class="page">
+
+  <!-- Page hero -->
+  <div class="hero-bg py-20 lg:py-24 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-wf-blue-soft border border-wf-blue-light/40 mb-7">
+        <span class="text-xs font-bold tracking-[0.2em] uppercase text-wf-blue">Notre programme</span>
+      </div>
+      <h1 class="text-4xl lg:text-6xl font-extrabold text-wf-blue leading-[1.05] tracking-tight max-w-4xl mx-auto">
+        Pourquoi voter<br/>pour notre <span class="accent-underline">liste</span> ?
+      </h1>
+      <p class="mt-10 text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        Construire une représentation du personnel plus proche, plus accessible et tournée vers l'action. Quatre engagements concrets structurent notre mandat — ils définiront notre façon de travailler dès le premier jour.
+      </p>
+    </div>
+  </div>
+
+  <!-- 4 piliers -->
+  <div class="bg-white py-20 lg:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid sm:grid-cols-2 gap-6 lg:gap-8">
+
+        <!-- Pillar 1 — Écouter -->
+        <div class="pillar-card relative bg-white rounded-2xl border border-gray-100 p-8 lg:p-10 shadow-soft reveal">
+          <div class="absolute top-8 right-8 text-7xl font-black text-wf-blue-soft leading-none select-none">01</div>
+          <div class="w-14 h-14 rounded-2xl bg-wf-blue flex items-center justify-center mb-7 relative">
+            <svg class="w-7 h-7 text-wf-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue mb-3 relative">Écouter</h3>
+          <div class="w-12 h-1 bg-wf-orange rounded-full mb-5"></div>
+          <p class="text-gray-600 leading-relaxed relative">
+            Un canal direct et confidentiel pour recueillir vos préoccupations sans filtre. Vos retours arrivent, sont entendus et orientés vers les bons interlocuteurs.
+          </p>
+        </div>
+
+        <!-- Pillar 2 — Dialoguer -->
+        <div class="pillar-card relative bg-white rounded-2xl border border-gray-100 p-8 lg:p-10 shadow-soft reveal">
+          <div class="absolute top-8 right-8 text-7xl font-black text-wf-blue-soft leading-none select-none">02</div>
+          <div class="w-14 h-14 rounded-2xl bg-wf-blue flex items-center justify-center mb-7">
+            <svg class="w-7 h-7 text-wf-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue mb-3">Dialoguer</h3>
+          <div class="w-12 h-1 bg-wf-orange rounded-full mb-5"></div>
+          <p class="text-gray-600 leading-relaxed">
+            Un lien professionnel et constructif entre les collaborateurs et la direction. Notre méthode : préparation rigoureuse, propositions documentées, respect mutuel.
+          </p>
+        </div>
+
+        <!-- Pillar 3 — Suivre -->
+        <div class="pillar-card relative bg-white rounded-2xl border border-gray-100 p-8 lg:p-10 shadow-soft reveal">
+          <div class="absolute top-8 right-8 text-7xl font-black text-wf-blue-soft leading-none select-none">03</div>
+          <div class="w-14 h-14 rounded-2xl bg-wf-blue flex items-center justify-center mb-7">
+            <svg class="w-7 h-7 text-wf-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+          </div>
+          <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue mb-3">Suivre</h3>
+          <div class="w-12 h-1 bg-wf-orange rounded-full mb-5"></div>
+          <p class="text-gray-600 leading-relaxed">
+            Un suivi structuré de chaque sujet remonté, avec des retours réguliers. Aucune demande ne reste sans réponse, aucun dossier ne se perd entre deux réunions.
+          </p>
+        </div>
+
+        <!-- Pillar 4 — Rendre compte -->
+        <div class="pillar-card relative bg-white rounded-2xl border border-gray-100 p-8 lg:p-10 shadow-soft reveal">
+          <div class="absolute top-8 right-8 text-7xl font-black text-wf-blue-soft leading-none select-none">04</div>
+          <div class="w-14 h-14 rounded-2xl bg-wf-blue flex items-center justify-center mb-7">
+            <svg class="w-7 h-7 text-wf-orange" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue mb-3">Rendre compte</h3>
+          <div class="w-12 h-1 bg-wf-orange rounded-full mb-5"></div>
+          <p class="text-gray-600 leading-relaxed">
+            Un bilan à mi-mandat partagé de manière transparente avec tous. Vous saurez à tout moment ce qui a été fait, ce qui est en cours et ce qui reste à porter.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Engagements concrets -->
+  <div class="bg-wf-blue-soft py-20 lg:py-28">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14 reveal">
+        <div class="text-sm font-bold tracking-[0.25em] uppercase text-wf-orange mb-5">MANDAT 2026 — 2028</div>
+        <h2 class="text-3xl lg:text-5xl font-extrabold text-wf-blue leading-tight">
+          Cinq raisons de voter <span class="accent-underline">Ensemble</span>
+        </h2>
+        <p class="mt-8 text-gray-600 max-w-2xl mx-auto">Une équipe proche de vous, paritaire et engagée pour ce qui compte vraiment.</p>
+      </div>
+
+      <!-- Female presence callout -->
+      <div class="reveal mb-10 bg-white rounded-3xl shadow-card overflow-hidden border-2 border-wf-orange/30">
+        <div class="grid sm:grid-cols-[auto_1fr] items-stretch">
+          <div class="bg-gradient-to-br from-wf-orange to-wf-orange-2 text-white p-7 sm:p-9 flex items-center justify-center text-center sm:min-w-[180px]">
+            <div>
+              <div class="text-5xl lg:text-6xl font-black leading-none">2<span class="text-3xl">/6</span></div>
+              <div class="text-[10px] font-bold uppercase tracking-[0.2em] mt-3 opacity-90">Femmes<br/>candidates</div>
+            </div>
+          </div>
+          <div class="p-7 sm:p-9 flex items-center">
+            <div>
+              <div class="text-xs font-bold tracking-[0.25em] uppercase text-wf-orange-deep mb-2">Une liste paritaire</div>
+              <h3 class="text-lg lg:text-xl font-extrabold text-wf-blue leading-tight">Sandra et Larisse portent la voix des femmes de WebbFontaine, comme titulaire et suppléante.</h3>
+              <p class="text-gray-600 text-sm lg:text-base mt-3 leading-relaxed">Parce qu'aucune représentation n'est juste sans la moitié des collaborateurs. Notre liste s'engage à porter les sujets qui concernent toutes et tous, sans hiérarchie de priorité.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 raisons -->
+      <div class="space-y-5 lg:space-y-6">
+
+        <!-- Raison 1 -->
+        <div class="reveal bg-white rounded-3xl shadow-card p-7 sm:p-9 lg:p-10 group hover:shadow-cardH transition-shadow">
+          <div class="grid sm:grid-cols-[auto_1fr] gap-6 lg:gap-8 items-start">
+            <div class="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-2 sm:min-w-[80px]">
+              <div class="text-xs font-bold uppercase tracking-[0.25em] text-wf-orange">Raison</div>
+              <div class="text-6xl lg:text-7xl font-black text-wf-blue leading-none">1</div>
+            </div>
+            <div>
+              <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue leading-tight">Une équipe qui connaît votre réalité</h3>
+              <p class="mt-3 text-gray-600 leading-relaxed">
+                Nos candidat·es travaillent à vos côtés, dans différents services. Nous vivons les mêmes contraintes, les mêmes objectifs et les mêmes réalités professionnelles que vous.
+              </p>
+              <blockquote class="mt-5 pl-4 border-l-4 border-wf-orange italic text-wf-blue/90">
+                « Être délégué, c'est d'abord savoir écouter avant de parler. »
+              </blockquote>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Proximité</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Terrain</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Diversité des profils</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raison 2 -->
+        <div class="reveal bg-white rounded-3xl shadow-card p-7 sm:p-9 lg:p-10 group hover:shadow-cardH transition-shadow">
+          <div class="grid sm:grid-cols-[auto_1fr] gap-6 lg:gap-8 items-start">
+            <div class="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-2 sm:min-w-[80px]">
+              <div class="text-xs font-bold uppercase tracking-[0.25em] text-wf-orange">Raison</div>
+              <div class="text-6xl lg:text-7xl font-black text-wf-blue leading-none">2</div>
+            </div>
+            <div>
+              <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue leading-tight">Une équipe accessible et disponible</h3>
+              <p class="mt-3 text-gray-600 leading-relaxed">
+                Échanges réguliers, présence visible sur le terrain, points de contact simples pour recueillir vos préoccupations, idées et suggestions.
+              </p>
+              <blockquote class="mt-5 pl-4 border-l-4 border-wf-orange italic text-wf-blue/90">
+                « Un délégué que vous ne voyez jamais ne sert à rien. »
+              </blockquote>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Disponibilité</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Écoute active</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Contact direct</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raison 3 -->
+        <div class="reveal bg-white rounded-3xl shadow-card p-7 sm:p-9 lg:p-10 group hover:shadow-cardH transition-shadow">
+          <div class="grid sm:grid-cols-[auto_1fr] gap-6 lg:gap-8 items-start">
+            <div class="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-2 sm:min-w-[80px]">
+              <div class="text-xs font-bold uppercase tracking-[0.25em] text-wf-orange">Raison</div>
+              <div class="text-6xl lg:text-7xl font-black text-wf-blue leading-none">3</div>
+            </div>
+            <div>
+              <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue leading-tight">Des engagements concrets et un suivi transparent</h3>
+              <p class="mt-3 text-gray-600 leading-relaxed">
+                Suivi structuré des sujets remontés. Communication régulière sur les actions menées. Bilan à mi-mandat partagé avec tous les collaborateurs.
+              </p>
+              <blockquote class="mt-5 pl-4 border-l-4 border-wf-orange italic text-wf-blue/90">
+                « Un sujet bien suivi a plus de chances d'aboutir. »
+              </blockquote>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Transparence</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Suivi</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Bilan mi-mandat</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raison 4 -->
+        <div class="reveal bg-white rounded-3xl shadow-card p-7 sm:p-9 lg:p-10 group hover:shadow-cardH transition-shadow">
+          <div class="grid sm:grid-cols-[auto_1fr] gap-6 lg:gap-8 items-start">
+            <div class="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-2 sm:min-w-[80px]">
+              <div class="text-xs font-bold uppercase tracking-[0.25em] text-wf-orange">Raison</div>
+              <div class="text-6xl lg:text-7xl font-black text-wf-blue leading-none">4</div>
+            </div>
+            <div>
+              <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue leading-tight">Une représentation équilibrée et proche de tous</h3>
+              <p class="mt-3 text-gray-600 leading-relaxed">
+                Femmes et hommes. Cadres, employés et agents. Plusieurs métiers et réalités de l'entreprise. Chacun trouvera un interlocuteur qui connaît son quotidien.
+              </p>
+              <blockquote class="mt-5 pl-4 border-l-4 border-wf-orange italic text-wf-blue/90">
+                « Personne ne devrait se sentir sans voix. »
+              </blockquote>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Parité</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Tous collèges</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Diversité métiers</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Raison 5 -->
+        <div class="reveal bg-white rounded-3xl shadow-card p-7 sm:p-9 lg:p-10 group hover:shadow-cardH transition-shadow">
+          <div class="grid sm:grid-cols-[auto_1fr] gap-6 lg:gap-8 items-start">
+            <div class="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-2 sm:min-w-[80px]">
+              <div class="text-xs font-bold uppercase tracking-[0.25em] text-wf-orange">Raison</div>
+              <div class="text-6xl lg:text-7xl font-black text-wf-blue leading-none">5</div>
+            </div>
+            <div>
+              <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue leading-tight">Un dialogue constructif au service de tous</h3>
+              <p class="mt-3 text-gray-600 leading-relaxed">
+                Notre rôle : être un pont efficace entre les collaborateurs et la direction. Faire remonter les réalités, encourager les échanges, contribuer à des solutions équilibrées et réalistes.
+              </p>
+              <blockquote class="mt-5 pl-4 border-l-4 border-wf-orange italic text-wf-blue/90">
+                « Le respect mutuel est la base d'un dialogue qui fait avancer. »
+              </blockquote>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Dialogue</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Constructif</span>
+                <span class="px-3 py-1 rounded-full bg-wf-blue-soft text-wf-blue text-xs font-bold uppercase tracking-wider">Solutions</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ============================================================ -->
+<!-- PAGE 3 — NOTRE ÉQUIPE                                         -->
+<!-- ============================================================ -->
+<section id="page-equipe" class="page">
+
+  <!-- Page hero -->
+  <div class="hero-bg py-20 lg:py-24 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-wf-blue-soft border border-wf-blue-light/40 mb-7">
+        <span class="text-xs font-bold tracking-[0.2em] uppercase text-wf-blue">Liste Ensemble — 6 candidat·es</span>
+      </div>
+      <h1 class="text-4xl lg:text-6xl font-extrabold text-wf-blue leading-[1.05] tracking-tight max-w-4xl mx-auto">
+        Vos <span class="accent-underline">candidats</span><br/>délégués.
+      </h1>
+      <p class="mt-10 text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+        Six visages, six parcours, un même engagement : porter votre voix avec exigence, rigueur et bienveillance.
+      </p>
+    </div>
+  </div>
+
+  <!-- Carousel -->
+  <div class="bg-white py-20 lg:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Controls top -->
+      <div class="flex items-center justify-between mb-10">
+        <div>
+          <div class="text-sm font-bold tracking-[0.25em] uppercase text-wf-orange mb-2">L'équipe complète</div>
+          <h2 class="text-2xl lg:text-3xl font-extrabold text-wf-blue">Découvrez nos profils</h2>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="prev-btn" aria-label="Précédent"
+            class="w-12 h-12 rounded-full border-2 border-wf-blue text-wf-blue hover:bg-wf-blue hover:text-white transition-all flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button id="next-btn" aria-label="Suivant"
+            class="w-12 h-12 rounded-full bg-wf-blue text-white hover:bg-wf-blue-deep transition-all flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Track -->
+      <div id="carousel" class="carousel-track flex gap-6 lg:gap-7 overflow-x-auto pb-6 -mx-4 px-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <!-- cards injected by JS -->
+      </div>
+
+      <!-- Dots -->
+      <div class="flex justify-center items-center gap-2 mt-10" id="dots"></div>
+
+    </div>
+  </div>
+
+  <!-- Final CTA -->
+  <div class="bg-wf-blue text-white py-20 lg:py-24 relative overflow-hidden">
+    <div class="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-wf-orange/10"></div>
+    <div class="absolute -bottom-32 -left-20 w-96 h-96 rounded-full bg-wf-blue-light/10"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+      <h2 class="text-3xl lg:text-5xl font-extrabold leading-tight">Le 29 mai, votre voix
+fera la différence.</h2>
+      <p class="mt-8 text-wf-blue-light text-lg max-w-2xl mx-auto">Une question ? Une remarque ? Un sujet à porter ? Écrivez-nous, l'équipe vous répond.</p>
+      <a href="tel:0197216858" class="mt-10 inline-flex items-center gap-3 btn-cta text-white font-bold px-7 py-4 rounded-full uppercase tracking-wider text-sm">
+        01 97 21 68 58
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      </a>
+    </div>
+  </div>
+
+</section>
+
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-wf-blue-deep text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+    <div class="grid md:grid-cols-3 gap-10 lg:gap-14">
+      <!-- Brand -->
+      <div>
+        <div class="flex items-center gap-2.5 mb-5">
+          <div class="w-11 h-11 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center">
+            <span class="text-white font-black text-xl tracking-tight">W</span>
+          </div>
+          <div class="leading-none">
+            <div class="font-extrabold text-white text-lg tracking-tight">WebbFontaine</div>
+            <div class="text-[10px] uppercase tracking-[0.18em] text-wf-blue-light font-semibold mt-0.5">Liste Ensemble</div>
+          </div>
+        </div>
+        <p class="text-sm text-wf-blue-light leading-relaxed">Élections des délégués du personnel 2026. Une liste indépendante, engagée pour un dialogue constructif.</p>
+      </div>
+
+      <!-- Scrutin -->
+      <div>
+        <div class="text-xs font-bold tracking-[0.25em] uppercase text-wf-orange mb-5">Le scrutin</div>
+        <ul class="space-y-3 text-sm text-wf-blue-light">
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-wf-orange flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <span><strong class="text-white">Vendredi 29 mai 2026</strong><br/>De 09h00 à 17h00</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-wf-orange flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>Salle CODIR
+WebbFontaine Benin</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <div class="text-xs font-bold tracking-[0.25em] uppercase text-wf-orange mb-5">Nous contacter</div>
+        <a href="tel:0197216858" class="inline-flex items-center gap-2 text-white font-semibold text-sm hover:text-wf-orange transition-colors">+229 01 97 21 68 58</a>
+        <p class="text-xs text-wf-blue-light mt-4 leading-relaxed">Toujours a votre écoute.</p>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 mt-12 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="text-xs text-wf-blue-light">© 2026 Liste Ensemble — Tous droits réservés.</p>
+      <p class="text-xs text-wf-blue-light italic">Site réalisé dans le cadre de la campagne interne WebbFontaine.</p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ============ SCRIPTS ============ -->
+<script>
+  // ------------------- Data -------------------
+  const candidates = [
+    {
+      name: 'Paterne NASSARA​',
+      role: 'Délégué titulaire',
+      college: 'Collège 2',
+      service: 'Resp. Statistique',
+      quote: "Un dialogue franc, constructif et utile pour tous.",
+      initials: 'PN',
+      photo: 'photos/candidat-6.jpg',
+      focus: '50% 25%'
+    },
+    {
+      name: 'Joyau TEVI\u200b',
+      role: 'Délégué suppléant',
+      college: 'Collège 2',
+      service: 'Ingénieur QA',
+      quote: "Transformer les préoccupations en sujets réellement suivis.",
+      initials: 'JT',
+      photo: 'photos/candidat-2.jpg',
+      focus: '50% 30%'
+    },
+    {
+      name: 'Sandra ECLOU​',
+      role: 'Délégué suppléant',
+      college: 'Collège 1',
+      service: 'Procurement Officer',
+      quote: "Contribuer à un environnement plus équilibré et humain.",
+      initials: 'SE',
+      photo: 'photos/candidat-3.jpg',
+      focus: '55% 35%'
+    },
+    {
+      name: 'Henri HONADO​',
+      role: 'Délégué titulaire',
+      college: 'Collège 1',
+      service: 'IT Support',
+      quote: "Aucune préoccupation exprimée ne restera sans réponse.",
+      initials: 'HH',
+      photo: 'photos/candidat-4.jpg',
+      focus: '35% 30%'
+    },
+    {
+      name: 'Larisse KAKPO​',
+      role: 'Délégué titulaire',
+      college: 'Collège 1',
+      service: 'Helpdesk',
+      quote: "Être la voix des collègues sur les sujets du quotidien.",
+      initials: 'LK',
+      photo: 'photos/candidat-5.jpg',
+      focus: '50% 28%'
+    },
+    {
+      name: 'Paulin DONVIDE​',
+      role: 'Délégué suppléant',
+      college: 'Collège 1',
+      service: 'Technicien Tracking​',
+      quote: "Renforcer le lien entre équipes terrain et décision",
+      initials: 'PD',
+      photo: 'photos/candidat-1.jpg',
+      focus: '50% 30%'
+    },
+  ];
+
+  // ------------------- Build carousel -------------------
+  function buildCarousel() {
+    const track = document.getElementById('carousel');
+    const dots = document.getElementById('dots');
+    track.innerHTML = '';
+    dots.innerHTML = '';
+
+    candidates.forEach((c, i) => {
+      const card = document.createElement('div');
+      card.className = 'candidate-card flex-shrink-0 w-[85%] sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-19px)]';
+      card.innerHTML = `
+        <div class="candidate-card-inner bg-white rounded-2xl overflow-hidden border-2 border-gray-100 shadow-card h-full flex flex-col">
+          <div class="relative">
+            <!-- Photo 3:4 -->
+            <div class="aspect-[3/4] w-full overflow-hidden bg-wf-blue-soft">
+              <img src="${c.photo}" alt="Portrait de ${c.name}" loading="lazy"
+                   class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                   style="object-position: ${c.focus};" />
+            </div>
+            <!-- Initials watermark -->
+            <div class="absolute top-4 left-4 w-12 h-12 rounded-xl bg-white/90 backdrop-blur flex items-center justify-center text-wf-blue font-black tracking-tight shadow-soft">
+              ${c.initials}
+            </div>
+            <!-- Role + college badges (stacked) -->
+            <div class="absolute top-4 right-4 flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-wf-orange text-white text-[10px] font-bold uppercase tracking-wider shadow-soft">
+                ${c.role}
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur text-wf-blue text-[10px] font-bold uppercase tracking-wider shadow-soft">
+                <svg class="w-3 h-3 text-wf-orange" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2L3 6v3a8 8 0 0014 0V6l-7-4z"/></svg>
+                ${c.college}
+              </span>
+            </div>
+            <!-- Bottom gradient to seam into card body -->
+            <div class="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
+          </div>
+
+          <div class="p-7 flex flex-col flex-1">
+            <h3 class="text-xl lg:text-2xl font-extrabold text-wf-blue leading-tight tracking-tight">${c.name}</h3>
+            <div class="mt-3 flex items-center gap-2 text-sm text-gray-500">
+              <svg class="w-4 h-4 text-wf-blue-light" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+              <span class="font-semibold">${c.service}</span>
+            </div>
+            <div class="mt-5 h-px bg-gradient-to-r from-wf-orange via-wf-orange/30 to-transparent"></div>
+            <blockquote class="mt-5 text-gray-600 italic leading-relaxed text-sm lg:text-base flex-1">
+              <span class="text-wf-orange text-2xl font-bold leading-none">“</span>${c.quote}<span class="text-wf-orange text-2xl font-bold leading-none">”</span>
+            </blockquote>
+          </div>
+        </div>
+      `;
+      track.appendChild(card);
+
+      const dot = document.createElement('button');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Aller au candidat ' + (i + 1));
+      dot.addEventListener('click', () => scrollToCard(i));
+      dots.appendChild(dot);
+    });
+
+    // Append a clone of all cards for seamless infinite loop
+    const originals = Array.from(track.children);
+    originals.forEach(card => {
+      const clone = card.cloneNode(true);
+      clone.setAttribute('aria-hidden', 'true');
+      clone.dataset.clone = '1';
+      track.appendChild(clone);
+    });
+  }
+
+  function getCardsPerView() {
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 640) return 2;
+    return 1;
+  }
+
+  function scrollToCard(i) {
+    const track = document.getElementById('carousel');
+    const card = track.children[i];
+    if (!card) return;
+    const left = card.offsetLeft - track.offsetLeft;
+    track.scrollTo({ left, behavior: 'smooth' });
+  }
+
+  function updateDots() {
+    const track = document.getElementById('carousel');
+    const cardWidth = track.children[0]?.offsetWidth || 1;
+    const gap = 28;
+    const N = 6; // original count
+    const rawIdx = Math.round(track.scrollLeft / (cardWidth + gap));
+    const currentIdx = ((rawIdx % N) + N) % N;
+    document.querySelectorAll('#dots .dot').forEach((d, i) => {
+      d.classList.toggle('active', i === currentIdx);
+    });
+  }
+
+  // ------------------- Autoplay (seamless loop) -------------------
+  const AUTOPLAY_MS = 6000;
+  let autoplayTimer = null;
+  let autoplayPaused = false;
+  let interactionPauseUntil = 0;
+
+  function originalSetWidth() {
+    const track = document.getElementById('carousel');
+    const cardWidth = track.children[0]?.offsetWidth || 0;
+    const gap = 28;
+    return (cardWidth + gap) * 6;
+  }
+
+  function loopIfNeeded() {
+    const track = document.getElementById('carousel');
+    const setW = originalSetWidth();
+    if (!setW) return;
+    // If we've scrolled past the first 6 cards, jump back invisibly
+    if (track.scrollLeft >= setW) {
+      track.scrollTo({ left: track.scrollLeft - setW, behavior: 'instant' });
+    } else if (track.scrollLeft < 0) {
+      track.scrollTo({ left: track.scrollLeft + setW, behavior: 'instant' });
+    }
+  }
+
+  function autoplayTick() {
+    if (autoplayPaused) return;
+    if (Date.now() < interactionPauseUntil) return;
+    const track = document.getElementById('carousel');
+    const cardWidth = track.children[0]?.offsetWidth || 0;
+    if (!cardWidth) return;
+    track.scrollBy({ left: cardWidth + 28, behavior: 'smooth' });
+    // After the smooth scroll likely finished, check for loop
+    setTimeout(loopIfNeeded, 700);
+  }
+
+  function startAutoplay() {
+    if (autoplayTimer) return;
+    autoplayTimer = setInterval(autoplayTick, AUTOPLAY_MS);
+  }
+
+  function pauseAutoplayBriefly(ms = 8000) {
+    interactionPauseUntil = Date.now() + ms;
+  }
+
+  function setupCarouselControls() {
+    const track = document.getElementById('carousel');
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      const cardWidth = track.children[0]?.offsetWidth || 1;
+      track.scrollBy({ left: -(cardWidth + 28), behavior: 'smooth' });
+      pauseAutoplayBriefly();
+      setTimeout(loopIfNeeded, 700);
+    });
+    document.getElementById('next-btn').addEventListener('click', () => {
+      const cardWidth = track.children[0]?.offsetWidth || 1;
+      track.scrollBy({ left: cardWidth + 28, behavior: 'smooth' });
+      pauseAutoplayBriefly();
+      setTimeout(loopIfNeeded, 700);
+    });
+    track.addEventListener('scroll', updateDots, { passive: true });
+
+    // Pause on hover / touch
+    track.addEventListener('mouseenter', () => { autoplayPaused = true; });
+    track.addEventListener('mouseleave', () => { autoplayPaused = false; });
+    track.addEventListener('touchstart', () => { pauseAutoplayBriefly(10000); }, { passive: true });
+
+    // Pause when carousel out of view, resume when in view
+    const ioCar = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        autoplayPaused = !e.isIntersecting ? true : autoplayPaused;
+        if (e.isIntersecting) autoplayPaused = false;
+      });
+    }, { threshold: 0.2 });
+    ioCar.observe(track);
+
+    startAutoplay();
+  }
+
+  // ------------------- Page navigation -------------------
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id)?.classList.add('active');
+
+    document.querySelectorAll('.nav-trigger').forEach(a => {
+      const isMatch = a.getAttribute('data-page') === id;
+      if (a.classList.contains('nav-link')) {
+        a.classList.toggle('active', isMatch);
+      }
+    });
+
+    // close mobile menu
+    document.getElementById('mobile-menu').classList.remove('open');
+
+    // scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // re-trigger reveal
+    setTimeout(triggerReveal, 100);
+  }
+
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('.nav-trigger');
+    if (!t) return;
+    e.preventDefault();
+    const page = t.getAttribute('data-page');
+    if (page) showPage(page);
+  });
+
+  // Burger
+  document.getElementById('burger').addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.toggle('open');
+  });
+
+  // ------------------- Reveal on scroll -------------------
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  function triggerReveal() {
+    document.querySelectorAll('.reveal').forEach(el => {
+      el.classList.remove('in');
+      observer.observe(el);
+    });
+    // Force in-view check
+    document.querySelectorAll('.reveal').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        el.classList.add('in');
+      }
+    });
+  }
+
+  // ------------------- Init -------------------
+  buildCarousel();
+  setupCarouselControls();
+  triggerReveal();
+
+  window.addEventListener('resize', () => {
+    updateDots();
+  });
+</script>
+
+</body>
+</html>
